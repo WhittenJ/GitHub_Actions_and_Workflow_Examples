@@ -1,0 +1,70 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Sync Develop to Release Branch
+
+# Purpose: The purpose of this job is to create a Pull Request from the Release branch into the Develop branch if a Pull Request is merged into Release.
+#   Steps:
+#     1. Checkout code.
+#     2. Setup Java.
+#     3. Search for open Pull Requests with the title of "Merge Release/#.#.# changes into Develop."
+#     4. Create a Pull Request from the Release branch into Develop
+
+run-name: Create Pull Request to merge Release branch changes into Develop
+
+on:
+  pull_request:
+    branches:
+      - release/**
+    types: [ closed ]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  Create_release_branch_pull_request:
+    if: github.event.pull_request.merged == true
+    name: Create Release Branch Pull Request
+    runs-on: windows-latest
+
+    steps:
+      - name: Clone the source code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 8
+
+#      - name: File System preparation
+#        run: chmod 755 mvnw
+
+      - name: Get Release Version
+        run: |
+          $CURRENT_PROJECT_VERSION=mvn help:evaluate -Dexpression="project.version" -q -DforceStdout
+          $MAJOR=mvn build-helper:parse-version -D"version.version"=$CURRENT_PROJECT_VERSION help:evaluate -Dexpression="parsedVersion.majorVersion" -q -DforceStdout
+          $MINOR=mvn build-helper:parse-version -D"version.version"=$CURRENT_PROJECT_VERSION help:evaluate -Dexpression="parsedVersion.minorVersion" -q -DforceStdout
+          $PATCH=mvn build-helper:parse-version -D"version.version"=$CURRENT_PROJECT_VERSION help:evaluate -Dexpression="parsedVersion.incrementalVersion" -q -DforceStdout
+          $NEXT_MINOR=mvn build-helper:parse-version -D"version.version"=$CURRENT_PROJECT_VERSION help:evaluate -Dexpression="parsedVersion.nextMinorVersion" -q -DforceStdout
+          $PROJECT_VERSION=$MAJOR+'.'+$MINOR+'.'+$PATCH
+          $NEXT_PROJECT_VERSION=$MAJOR+'.'+$NEXT_MINOR+'.0-SNAPSHOT'
+          echo "project_version=$PROJECT_VERSION" >> $env:GITHUB_ENV
+          echo "next_project_version=$NEXT_PROJECT_VERSION" >> $env:GITHUB_ENV
+
+      # See: https://cli.github.com/manual/
+      # Check if we need to make a Pull Request to merge Release branch changes into Develop.
+      - name: Check if a Pull Request was created to merge Release into Develop
+        run: |
+          $PR_CREATED=(gh pr list --search "Merge Release/${{ env.project_version }} changes into Develop.")
+          echo "PR_Created=$PR_CREATED" >> $env:GITHUB_ENV
+
+      # Only create a PR in Release branches in which no "Merge Release/** changes into Develop." exists.
+      # Otherwise, this will give an error if a PR has already been created.
+      - name: Create a Pull Request to merge Release into Develop
+        if: ${{ env.PR_Created == '' }}
+        run: >
+          gh pr create
+          --base develop
+          --title "Merge Release/${{ env.project_version }} changes into Develop."
+          --body "This Pull Request should contain all of the changes made in the Release branch.  This request should be merged BEFORE the Bump Develop to ${{ env.next_project_version }} Pull Request."
