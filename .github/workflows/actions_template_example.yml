@@ -9,11 +9,9 @@ jobs:
       - uses: actions/checkout@v3
         
       # This is for PRIVATE actions only.  Multiple actions within a repo is only allowed for private actions.
-      # If you'd like to share actions across repos, each action must be within it's own repo.
-      # Then call those private actions as you normally would for public actions.
-      # eg 'uses: actions/checkout@v3' so something like:
-      # 'uses: WhittenJ/template_composite@v1'
-      # 'uses: WhittenJ/template_script@v1'
+      # These can be called from other repos.  Something like:
+      # uses: WhittenJ/GitHub_Actions_and_Workflow_Examples/template_composite@v1
+      # uses: WhittenJ/GitHub_Actions_and_Workflow_Examples/template_script@v1
       
       - name: Example for Composite Actions
         uses: ./.github/actions/template_composite
