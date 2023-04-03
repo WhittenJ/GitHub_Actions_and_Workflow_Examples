@@ -4,9 +4,9 @@ description: This action installs NSIS if it was not previously cached
 runs:
   using: composite
   steps:    
-# Required for Project to build *.exe installer
+
   - name: Install NSIS if not cached
-    shell: bash
+    shell: pwsh
     run: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
       choco install nsis.install --version=2.46 -y -dv
