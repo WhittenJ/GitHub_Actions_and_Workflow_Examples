@@ -171,16 +171,8 @@ jobs:
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
 
-      - name: Set up cache for NSIS v2.46
-        id: cache_NSIS
-        uses: actions/cache@v3
-        with:
-          path: C:\Program Files (x86)\NSIS
-          key: ${{ runner.os }}-nsis
-
       # Required for Project to build *.exe installer
       - name: Install NSIS if not cached
-        if: steps.cache_NSIS.outputs.cache-hit != 'true'
         uses: ./.github/actions/install_nsis
 
       # FIXME: Change this back to deploy in the LIVE codebase.
