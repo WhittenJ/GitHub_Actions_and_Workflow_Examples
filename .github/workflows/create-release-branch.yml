@@ -41,24 +41,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 8
-
-#      - name: File System preparation
-#        run: chmod 755 mvnw
-
-      - name: Set up cache for ~./m2/repository
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-            maven-${{ runner.os }}-
-            maven-
+      - name: Setup Java JDK and Maven
+        uses: ./.github/actions/setup_mvnw
 
       # $CURRENT_PROJECT_VERSION should be <project.version> without -SNAPSHOT, eg "1.0.245-SNAPSHOT" would be "1.0.245".
       # $PROJECT_BUILD should be <project.version> with a new qualifier of '-r[Date_Time of commit].[commit short sha]', eg "1.0.245-r20220914_1547.abcdef"

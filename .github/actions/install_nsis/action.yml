@@ -1,0 +1,22 @@
+name: Install NSIS if not cached
+description: This action installs NSIS if it was not previously cached
+    
+runs:
+  using: composite
+  steps:    
+# Required for Project to build *.exe installer
+  - name: Install NSIS if not cached
+    shell: bash
+    run: |
+      [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+      choco install nsis.install --version=2.46 -y -dv
+  
+  # This step overwrites parts of the NSIS program with specific code.  I don't know what exactly.
+  #      - name: Extract NSIS log if not cached
+  #        
+  #        run: |
+  #          echo "$(pwd)"
+  #          7z.exe x "D:\a\project-testing\project-testing\project-build\nsis-2.46-log.zip" -o"C:\Program Files (x86)\NSIS" -y -r
+  #          cd "D:\a\project-testing\project-testing"
+  #          echo "$(pwd)"
+  #          dir

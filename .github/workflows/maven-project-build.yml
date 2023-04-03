@@ -69,14 +69,8 @@ jobs:
       - name: Clone the source code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 8
-
-#      - name: File System preparation
-#        run: chmod 755 mvnw
+      - name: Setup Java JDK and Maven
+        uses: ./.github/actions/setup_mvnw
 
       # Note:
       #   ref_name will be the PUSHED to branch name, eg 'feature/INT-1234'.
@@ -146,14 +140,8 @@ jobs:
       - name: Clone the source code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 8
-
-#      - name: File System preparation
-#        run: chmod 755 mvnw
+      - name: Setup Java JDK and Maven
+        uses: ./.github/actions/setup_mvnw
 
       - name: Set up cache for ~./m2/repository
         uses: actions/cache@v3
@@ -180,24 +168,8 @@ jobs:
       - name: Clone the source code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 8
-
-#      - name: File System preparation
-#        run: chmod 755 mvnw
-
-      - name: Set up cache for ~./m2/repository
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-            maven-${{ runner.os }}-
-            maven-
+      - name: Setup Java JDK and Maven
+        uses: ./.github/actions/setup_mvnw
 
       - name: Set up cache for NSIS v2.46
         id: cache_NSIS
@@ -209,19 +181,7 @@ jobs:
       # Required for Project to build *.exe installer
       - name: Install NSIS if not cached
         if: steps.cache_NSIS.outputs.cache-hit != 'true'
-        run: |
-          [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-          choco install nsis.install --version=2.46 -y -dv
-
-#      # This step overwrites parts of the NSIS program with specific code.  I don't know what exactly.
-#      - name: Extract NSIS log if not cached
-#        if: steps.cache_NSIS.outputs.cache-hit != 'true'
-#        run: |
-#          echo "$(pwd)"
-#          7z.exe x "D:\a\project-testing\project-testing\project-build\nsis-2.46-log.zip" -o"C:\Program Files (x86)\NSIS" -y -r
-#          cd "D:\a\project-testing\project-testing"
-#          echo "$(pwd)"
-#          dir
+        uses: ./.github/actions/install_nsis
 
       # FIXME: Change this back to deploy in the LIVE codebase.
       - name: Deploy ${{ needs.Calc_project_build.outputs.project_build }} with Maven
