@@ -128,7 +128,6 @@ jobs:
           }
           echo "project_version=$PROJECT_VERSION" >> $env:GITHUB_OUTPUT
           echo "project_build=$PROJECT_BUILD" >> $env:GITHUB_OUTPUT
-          
   Unit_test_project:
     name: Project Unit Tests
     runs-on: windows-latest
@@ -150,7 +149,6 @@ jobs:
             maven-
       - name: Run Project Unit Tests
         run: mvn --batch-mode clean package
-
   Build_project:
     name: Build and Deploy Project
     runs-on: windows-latest
