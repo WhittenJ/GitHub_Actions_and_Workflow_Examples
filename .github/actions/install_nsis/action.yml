@@ -1,7 +1,6 @@
 ---
 name: Install NSIS if not cached
 description: This action installs NSIS if it was not previously cached
-
 runs:
   using: composite
   steps:
@@ -11,10 +10,9 @@ runs:
       with:
         path: C:\Program Files (x86)\NSIS
         key: ${{ runner.os }}-nsis
-
     - name: Install NSIS if not cached
       if: steps.cache_NSIS.outputs.cache-hit != 'true'
       shell: pwsh
-      run: |
+      run: |-
         [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
         choco install nsis.install --version=2.46 -y -dv

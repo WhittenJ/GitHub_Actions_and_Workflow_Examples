@@ -1,6 +1,6 @@
+---
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: Create Release from Develop
 
 # Purpose: This will create a release branch using the latest code from Develop.
@@ -19,20 +19,15 @@ name: Create Release from Develop
 #     2. Create a feature branch to bump Develop's version.
 #     3. Set the project.version and commit the pom.xml change to the feature branch.
 #     4. Create a pull request to bump the version number.
-
 on: workflow_dispatch
-
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   Create_Release:
     name: Create Release branch from latest Develop
     runs-on: windows-latest
-
     strategy:
       fail-fast: false
-
     steps:
       # Add token here to enable this workflow to trigger other workflows on PUSH, such as maven-feature-build.yml
       - name: Clone the source code
@@ -40,7 +35,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
 
@@ -56,7 +50,6 @@ jobs:
           echo "Release build will be $PROJECT_BUILD after completion."
           echo "project_version=$CURRENT_PROJECT_VERSION" >> $env:GITHUB_ENV
           echo "project_build=$PROJECT_BUILD" >> $env:GITHUB_ENV
-
       - name: Create Release Branch from Develop
         run: |
           git switch develop
@@ -71,13 +64,12 @@ jobs:
           --head release/${{ env.project_version }}
           --title "Merge ${{ env.project_version }} into Master"
           --body "Created by GitHub action"
-
-      - name: Reminder - This workflow does not create a build.  Please check the Action for the release/${{ env.project_version }} branch.
+      - name: Reminder - This workflow does not create a build.  Please check the
+          Action for the release/${{ env.project_version }} branch.
         run: |
           echo "The release build should be under the action for the release/${{ env.project_version }} branch."
           echo "The action should be named 'Build for release/${{ env.project_version }} branch.'"
           echo "The release build should be ${{ env.project_build }}"
-
       - name: Calculate next Develop version
         run: |
           $CURRENT_PROJECT_VERSION=mvn help:evaluate -Dexpression="project.version" -q -DforceStdout
@@ -87,12 +79,10 @@ jobs:
           echo "Current version is $CURRENT"
           echo "Develop will be bumped to $NEXT_VERSION"
           echo "nextVersion=$NEXT_VERSION" >> $env:GITHUB_ENV
-
       - name: Create bump Feature Branch from Develop
         run: |
           git switch develop
           git checkout -b feature/${{ env.nextVersion }}
-
       - name: Bump Develop version to ${{ env.nextVersion }}
         run: |
           mvn versions:set -DnewVersion="${{ env.nextVersion }}" versions:commit
@@ -104,9 +94,11 @@ jobs:
 
       # See: https://cli.github.com/manual/
       - name: Create pull request to Bump version in Develop
-        run: >
+        run: >-
           gh pr create
           --base develop
           --head feature/${{ env.nextVersion }}
           --title "Bump Develop to ${{ env.nextVersion }}"
-          --body "Bump the Develop branch version to ${{ env.nextVersion }}.  This is an automated Pull Request created by GitHub action.  Please merge this Pull Request AFTER any Release Branch changes are merged."
+          --body "Bump the Develop branch version to ${{ env.nextVersion }}.  This
+          is an automated Pull Request created by GitHub action.  Please merge this
+          Pull Request AFTER any Release Branch changes are merged."

@@ -1,25 +1,19 @@
+---
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: Nightly Build for Develop
-
 on:
   workflow_dispatch:
-
   schedule:
-    - cron: '50 0 * * 1-5'
-
+    - cron: 50 0 * * 1-5
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   Update_project:
     name: Automatically update Project dependencies
     runs-on: windows-latest
-
     strategy:
       fail-fast: false
-
     steps:
       # Add token here to enable this workflow to trigger other workflows on PUSH, such as maven-feature-build.yml
       - name: Clone the source code
@@ -27,10 +21,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
-
       - name: Update Project Dependencies
         run: |
           mvn versions:update-properties@update-properties-latest -U -s .mvn/wrapper/settings.xml
@@ -40,13 +32,11 @@ jobs:
           {
             echo "code_changed=$POM_CHANGED" >> $env:GITHUB_ENV
           }
-
       - name: Create Auto-Version Branch from Develop
         if: ${{ env.code_changed }}
         run: |
           git switch develop
           git checkout -b feature/auto-version-${{ github.run_number }}
-
       - name: Commit POM changes
         if: ${{ env.code_changed }}
         run: |
@@ -54,7 +44,6 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add .
           git commit -m 'POM versions changed'
-
       - name: Check for already existing Pull Request
         if: ${{ env.code_changed }}
         run: |
@@ -80,7 +69,6 @@ jobs:
           else {
             echo "No open Automatic POM changes Pull Request detected."
           }
-
       - name: Push POM Changes to GitHub
         if: ${{ env.code_changed && !env.stop }}
         run: git push --set-upstream origin feature/auto-version-${{ github.run_number }}
@@ -94,47 +82,36 @@ jobs:
           --head feature/auto-version-${{ github.run_number }}
           --title "$(date +'%m-%d-%Y') - Maven POM auto updates into Develop"
           --body "Created by Scheduled GitHub action"
-
   Calc_project_build:
     name: Calculate Project Build Number
     runs-on: windows-latest
-    needs: [ Update_project ]
-
+    needs: [Update_project]
     strategy:
       fail-fast: false
-
     outputs:
       project_build: ${{ steps.calc_build_number.outputs.project_build }}
-
     steps:
       - name: Clone the source code
         uses: actions/checkout@v3
-
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
-
       - name: Get current project snapshot
         id: calc_build_number
         run: |
           $CURRENT_PROJECT_VERSION=mvn help:evaluate -Dexpression="project.version" -q -DforceStdout
           $PROJECT_BUILD=$CURRENT_PROJECT_VERSION
           echo "project_build=$PROJECT_BUILD" >> $env:GITHUB_OUTPUT
-
   Unit_test_project:
     name: Project Unit Tests and CodeQL Scan
     runs-on: windows-latest
-    needs: [ Calc_project_build ]
-
+    needs: [Calc_project_build]
     strategy:
       fail-fast: false
-
     steps:
       - name: Clone the source code
         uses: actions/checkout@v3
-
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
-
       - name: Set up cache for ~./m2/repository
         uses: actions/cache@v3
         with:
@@ -144,29 +121,23 @@ jobs:
             maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
             maven-${{ runner.os }}-
             maven-
-
 #      - name: Initialize CodeQL
 #        uses: github/codeql-action/init@v2
 #        with:
 #          languages: java
-
       - name: Run Project Unit Tests
         run: mvn --batch-mode clean package
 
 #      - name: Perform CodeQL Analysis
 #        uses: github/codeql-action/analyze@v2
-
   Build_project:
     runs-on: windows-latest
-    needs: [ Calc_project_build ]
-
+    needs: [Calc_project_build]
     strategy:
       fail-fast: false
-
     steps:
       - name: Clone the source code
         uses: actions/checkout@v3
-
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
 
@@ -176,7 +147,7 @@ jobs:
 
       # FIXME: Change this back to deploy in the LIVE codebase.
       - name: Deploy ${{ needs.Calc_project_build.outputs.project_build }} with Maven
-        run: |
+        run: |-
           $PROJECT_BUILD="${{ needs.Calc_project_build.outputs.project_build }}"
           echo "Build number will be $PROJECT_BUILD"
           mvn versions:set -DnewVersion="$PROJECT_BUILD" versions:commit

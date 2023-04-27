@@ -1,40 +1,31 @@
+---
 name: GitHub Action Validation
-
 on:
   push:
-    branches:
-      - feature/**
-
+    branches: [feature/**]
 env:
   GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN}}
-
 jobs:
   action_validation:
     name: Validate GitHub Actions using Lint
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.WORKFLOW_TOKEN}}
-
       - name: Validate YAML files
         continue-on-error: true
         run: yamllint -d relaxed .
-
       - name: Install Yamlfix
         run: pip install Yamlfix
-      
       - name: Run Yamlfix
         run: yamlfix .
-
       - name: Check for changes
         id: yamlfix_check
         run: echo "code_changed=$(git status --porcelain | head -n 1)" >> $GITHUB_OUTPUT
-
       - name: Commit Yamlfix changes
         if: ${{ steps.yamlfix_check.outputs.code_changed }}
-        run: |
+        run: |-
           echo "Committing yamlfix fixes"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"

@@ -1,6 +1,6 @@
+---
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: Build Project
 
 # Purpose: This will create a Build when a commit is PUSHED or a PULL REQUEST is MERGED.
@@ -33,42 +33,27 @@ name: Build Project
 #     4. Restore the Cache for NSIS, which is a Windows based program that creates *.exe installers.
 #     5. Build and deploy the Project build to GitHub packages using Maven.
 #     6. Create and upload the Project installers to GitHub actions.
-
 run-name: Build for '${{ github.base_ref || github.ref_name }}' branch.
-
 on:
   push:
-    branches:
-      - feature/**
-      - release/**
-      - master
-
+    branches: [feature/**, release/**, master]
   pull_request:
-    branches:
-      - develop
-      - hotfix/**
-      - support/**
-    types: [ closed ]
-
+    branches: [develop, hotfix/**, support/**]
+    types: [closed]
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   Calc_project_build:
     name: Calculate Project Build Number
     runs-on: windows-latest
-
     strategy:
       fail-fast: false
-
     outputs:
       project_build: ${{ steps.calc_build_number.outputs.project_build }}
       project_version: ${{ steps.calc_build_number.outputs.project_version }}
-
     steps:
       - name: Clone the source code
         uses: actions/checkout@v3
-
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
 
@@ -127,22 +112,17 @@ jobs:
           }
           echo "project_version=$PROJECT_VERSION" >> $env:GITHUB_OUTPUT
           echo "project_build=$PROJECT_BUILD" >> $env:GITHUB_OUTPUT
-
   Unit_test_project:
     name: Project Unit Tests
     runs-on: windows-latest
-    needs: [ Calc_project_build ]
-
+    needs: [Calc_project_build]
     strategy:
       fail-fast: false
-
     steps:
       - name: Clone the source code
         uses: actions/checkout@v3
-
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
-
       - name: Set up cache for ~./m2/repository
         uses: actions/cache@v3
         with:
@@ -152,22 +132,17 @@ jobs:
             maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
             maven-${{ runner.os }}-
             maven-
-
       - name: Run Project Unit Tests
         run: mvn --batch-mode clean package
-
   Build_project:
     name: Build and Deploy Project
     runs-on: windows-latest
-    needs: [ Calc_project_build ]
-
+    needs: [Calc_project_build]
     strategy:
       fail-fast: false
-
     steps:
       - name: Clone the source code
         uses: actions/checkout@v3
-
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
 
@@ -200,7 +175,6 @@ jobs:
 #          ./mvnw --batch-mode -f "uploadzip.xml" clean install -Drevision="$PROJECT_BUILD" -s .mvn/wrapper/settings.xml
 #          ./mvnw --batch-mode -f "uploadexe.xml" clean install -Drevision="$PROJECT_BUILD" -s .mvn/wrapper/settings.xml
 #          ./mvnw --batch-mode -f "uploadsetupexe.xml" clean install -Drevision="$PROJECT_BUILD" -s .mvn/wrapper/settings.xml
-
       - name: Tag Master branch build as ${{ needs.Calc_project_build.outputs.project_build }}
         if: github.ref_name == 'master'
         uses: mathieudutour/github-tag-action@v6.1

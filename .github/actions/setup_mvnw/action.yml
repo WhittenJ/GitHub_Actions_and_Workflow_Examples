@@ -1,17 +1,16 @@
+---
 name: Setup Maven for Java 8
 description: This action sets up ./mvnw for Maven
-
 inputs:
   java_distribution:
     description: Java distribution method
-    default: 'zulu'
+    default: zulu
   java_version:
     description: Java major version number (eg, 8)
     default: '8'
   java_cache:
     description: Java cache type (eg, Maven, Gradle, etc)
-    default: 'maven'
-
+    default: maven
 runs:
   using: composite
   steps:
