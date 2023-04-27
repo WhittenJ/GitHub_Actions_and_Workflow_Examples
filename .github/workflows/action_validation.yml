@@ -15,3 +15,21 @@ jobs:
 
       - name: Validate YAML files
         run: yamllint -d relaxed .
+
+      - name: Install Yamlfix
+        run: pip install Yamlfix
+      
+      - name: Run Yamlfix
+        run: yamlfix .
+
+      - name: Check for changes
+        id: yamlfix_check
+        run: echo "code_changed=$(git status --porcelain)" >> $GITHUB_OUTPUT
+
+      - name: Commit Yamlfix changes
+        if: ${{ steps.yamlfix_check.outputs.code_changed }}
+        run: |
+          echo "Committing yamlfix fixes"
+          git add .
+          git commit -m 'Yamlfix automatic changes'
+          git push
