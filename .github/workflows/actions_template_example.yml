@@ -4,26 +4,26 @@ jobs:
   hello_world_job:
     runs-on: ubuntu-latest
     name: A job to say hello
-    
+
     steps:
       - uses: actions/checkout@v3
-        
+
       # This is for PRIVATE actions only.  Multiple actions within a repo is only allowed for private actions.
       # These can be called from other repos.  Something like:
       # uses: WhittenJ/GitHub_Actions_and_Workflow_Examples/template_composite@v1
       # uses: WhittenJ/GitHub_Actions_and_Workflow_Examples/template_script@v1
-      
+
       - name: Example for Composite Actions
         uses: ./.github/actions/template_composite
-        
+
       - name: Example for Composite Actions with Script and Inputs
         id: foo
         uses: ./.github/actions/template_script
         with:
           who-to-greet: 'Mona the Octocat'
-          
+
       - name: Example for Docker Action
         uses: ./.github/actions/template_docker
-          
+
       - run: echo random-number ${{ steps.foo.outputs.random-number }}
         shell: bash

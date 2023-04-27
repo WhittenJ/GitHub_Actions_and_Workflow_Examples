@@ -208,9 +208,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: ${{ needs.Calc_project_build.outputs.project_build }}
           tag_prefix: ''
-
-#      - name: Upload Project artifacts to Github
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: Project-${{ needs.Calc_project_build.outputs.project_build }}_Package
-#          path: staging

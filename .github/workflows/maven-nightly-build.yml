@@ -38,7 +38,7 @@ jobs:
           echo "update-properties completed-------------------"
           if ( $POM_CHANGED -like '*pom.xml*' )
           {
-            echo "code_changed=$POM_CHANGED" >> $env:GITHUB_ENV            
+            echo "code_changed=$POM_CHANGED" >> $env:GITHUB_ENV
           }
 
       - name: Create Auto-Version Branch from Develop
@@ -181,27 +181,3 @@ jobs:
           echo "Build number will be $PROJECT_BUILD"
           mvn versions:set -DnewVersion="$PROJECT_BUILD" versions:commit
           mvn --batch-mode clean install -DskipTests
-
-      # Create Project exe file using NSIS
-#      - name: Create Project installer
-#        run: |
-#          $PROJECT_BUILD="${{ needs.Calc_project_build.outputs.project_build }}"
-#          & 'C:\Program Files (x86)\NSIS\makensis.exe' /DMIM_FILENAME="D:\a\project-testing\project-testing\project-build\project.zip" /DVERSION_NUMBER="$PROJECT_BUILD" /DPRODUCT_VERSION="$PROJECT_BUILD" "D:\a\project-testing\project-testing\installer\project\project.nsi"
-
-      # FIXME: Change this back to deploy in the LIVE codebase.
-#      - name: Copy and Upload Project zip, exe, and setupexe via Maven
-#        run: |
-#          $PROJECT_BUILD="${{ needs.Calc_project_build.outputs.project_build }}"
-#          mkdir staging
-#          copy "D:/a/project-testing/project-testing/project-build/*.zip" staging
-#          copy "D:/a/project-testing/project-testing/installer/project/*.exe" staging
-#          copy "D:\a\project-testing\project-testing\installer\project\projectsetup-$PROJECT_BUILD.exe" "D:\a\project-testing\project-testing\staging\project.exe"
-#          ./mvnw --batch-mode -f "uploadzip.xml" clean install -Drevision="$PROJECT_BUILD" -s .mvn/wrapper/settings.xml
-#          ./mvnw --batch-mode -f "uploadexe.xml" clean install -Drevision="$PROJECT_BUILD" -s .mvn/wrapper/settings.xml
-#          ./mvnw --batch-mode -f "uploadsetupexe.xml" clean install -Drevision="$PROJECT_BUILD" -s .mvn/wrapper/settings.xml
-
-#      - name: Upload Project artifacts to Github
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: Project-${{ needs.Calc_project_build.outputs.project_build }}_Package
-#          path: staging
