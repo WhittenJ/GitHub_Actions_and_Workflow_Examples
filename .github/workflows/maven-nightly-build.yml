@@ -1,15 +1,13 @@
+---
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 name: Nightly Build for Develop
-
 on:
   workflow_dispatch:
   schedule:
     - cron: 50 0 * * 1-5
-
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   Update_project:
     name: Automatically update Project dependencies
@@ -123,7 +121,6 @@ jobs:
             maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
             maven-${{ runner.os }}-
             maven-
-
 #      - name: Initialize CodeQL
 #        uses: github/codeql-action/init@v2
 #        with:

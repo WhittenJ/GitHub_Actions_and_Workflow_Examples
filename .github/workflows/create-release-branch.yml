@@ -1,3 +1,4 @@
+---
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 name: Create Release from Develop
@@ -19,10 +20,8 @@ name: Create Release from Develop
 #     3. Set the project.version and commit the pom.xml change to the feature branch.
 #     4. Create a pull request to bump the version number.
 on: workflow_dispatch
-
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   Create_Release:
     name: Create Release branch from latest Develop
