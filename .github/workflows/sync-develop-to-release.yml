@@ -1,6 +1,5 @@
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: Sync Develop to Release Branch
 
 # Purpose: The purpose of this job is to create a Pull Request from the Release branch into the Develop branch if a Pull Request is merged into Release.
@@ -9,14 +8,14 @@ name: Sync Develop to Release Branch
 #     2. Setup Java.
 #     3. Search for open Pull Requests with the title of "Merge Release/#.#.# changes into Develop."
 #     4. Create a Pull Request from the Release branch into Develop
-
 run-name: Create Pull Request to merge Release branch changes into Develop
 
 on:
   pull_request:
     branches:
       - release/**
-    types: [ closed ]
+    types:
+      - closed
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -26,14 +25,11 @@ jobs:
     if: github.event.pull_request.merged == true
     name: Create Release Branch Pull Request
     runs-on: windows-latest
-
     steps:
       - name: Clone the source code
         uses: actions/checkout@v3
-
       - name: Setup Java JDK and Maven
         uses: ./.github/actions/setup_mvnw
-
       - name: Get Release Version
         run: |
           $CURRENT_PROJECT_VERSION=mvn help:evaluate -Dexpression="project.version" -q -DforceStdout
@@ -57,8 +53,10 @@ jobs:
       # Otherwise, this will give an error if a PR has already been created.
       - name: Create a Pull Request to merge Release into Develop
         if: ${{ env.PR_Created == '' }}
-        run: >
+        run: >-
           gh pr create
           --base develop
           --title "Merge Release/${{ env.project_version }} changes into Develop."
-          --body "This Pull Request should contain all of the changes made in the Release branch.  This request should be merged BEFORE the Bump Develop to ${{ env.next_project_version }} Pull Request."
+          --body "This Pull Request should contain all of the changes made in the
+          Release branch.  This request should be merged BEFORE the Bump Develop to
+          ${{ env.next_project_version }} Pull Request."

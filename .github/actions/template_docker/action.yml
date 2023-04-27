@@ -1,5 +1,6 @@
-name: "Action 1"
-description: "The Docker Action"
+name: Action 1
+description: The Docker Action
+
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: docker
+  image: Dockerfile
