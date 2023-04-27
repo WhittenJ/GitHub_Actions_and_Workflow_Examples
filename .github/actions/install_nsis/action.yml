@@ -1,6 +1,6 @@
----
 name: Install NSIS if not cached
 description: This action installs NSIS if it was not previously cached
+
 runs:
   using: composite
   steps:

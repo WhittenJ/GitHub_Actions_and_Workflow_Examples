@@ -1,10 +1,12 @@
----
 name: GitHub Action Validation
+
 on:
   push:
     branches: [feature/**]
+
 env:
   GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN}}
+
 jobs:
   action_validation:
     name: Validate GitHub Actions using Lint

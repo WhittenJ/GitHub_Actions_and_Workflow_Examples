@@ -1,6 +1,6 @@
----
 name: Setup Maven for Java 8
 description: This action sets up ./mvnw for Maven
+
 inputs:
   java_distribution:
     description: Java distribution method
@@ -11,6 +11,7 @@ inputs:
   java_cache:
     description: Java cache type (eg, Maven, Gradle, etc)
     default: maven
+
 runs:
   using: composite
   steps:
