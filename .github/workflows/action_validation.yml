@@ -25,7 +25,7 @@ jobs:
 
       - name: Check for changes
         id: yamlfix_check
-        run: echo "code_changed=$(git status --porcelain)" >> $GITHUB_OUTPUT
+        run: echo "code_changed=$(git status --porcelain | trim -1)" >> $GITHUB_OUTPUT
 
       - name: Commit Yamlfix changes
         if: ${{ steps.yamlfix_check.outputs.code_changed }}
