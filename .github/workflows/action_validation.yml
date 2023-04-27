@@ -2,12 +2,17 @@ name: GitHub Action Validation
 
 on:
   push:
-    branches: [feature/**]
+    branches:
+      - feature/**
+    paths:
+      - .github/**
 
 env:
   GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN}}
+  # See: https://lyz-code.github.io/yamlfix/#configuration-options
   YAMLFIX_EXPLICIT_START: false
   YAMLFIX_SECTION_WHITELINES: 1
+  YAMLFIX_SEQUENCE_STYLE: block_style
 
 jobs:
   action_validation:

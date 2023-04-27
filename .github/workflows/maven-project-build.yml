@@ -37,6 +37,8 @@ run-name: Build for '${{ github.base_ref || github.ref_name }}' branch.
 on:
   push:
     branches: [feature/**, release/**, master]
+    paths-ignore:
+      - .github/**
   pull_request:
     branches: [develop, hotfix/**, support/**]
     types: [closed]
