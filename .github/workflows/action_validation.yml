@@ -6,6 +6,7 @@ on:
       - feature/**
     paths:
       - .github/**
+  workflow_dispatch:
 
 env:
   # See: https://lyz-code.github.io/yamlfix/#configuration-options
@@ -20,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.WORKFLOW_TOKEN}}
+          token: ${{ secrets.WORKFLOW_TOKEN  }}
       - name: Validate YAML files
         continue-on-error: true
         run: yamllint -d relaxed .
