@@ -51,7 +51,7 @@ on:
       - closed
   workflow_run:
     workflows:
-      - "GitHub Action Validation"
+      - GitHub Action Validation
     types:
       - completed
     path:
