@@ -18,6 +18,10 @@ jobs:
         run: yamllint -d relaxed .
       - name: Install Yamlfix
         run: pip install Yamlfix
+      - name: Configure Yamlfix
+        run: |
+          echo "YAMLFIX_EXPLICIT_START=false" >> $env:GITHUB_ENV
+          echo "YAMLFIX_SECTION_WHITELINES=1" >> $env:GITHUB_ENV
       - name: Run Yamlfix
         run: yamlfix .
       - name: Check for changes
