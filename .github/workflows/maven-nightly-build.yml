@@ -87,7 +87,8 @@ jobs:
   Calc_project_build:
     name: Calculate Project Build Number
     runs-on: windows-latest
-    needs: [Update_project]
+    needs:
+      - Update_project
     strategy:
       fail-fast: false
     outputs:
@@ -106,7 +107,8 @@ jobs:
   Unit_test_project:
     name: Project Unit Tests and CodeQL Scan
     runs-on: windows-latest
-    needs: [Calc_project_build]
+    needs:
+      - Calc_project_build
     strategy:
       fail-fast: false
     steps:
@@ -135,7 +137,8 @@ jobs:
 #        uses: github/codeql-action/analyze@v2
   Build_project:
     runs-on: windows-latest
-    needs: [Calc_project_build]
+    needs:
+      - Calc_project_build
     strategy:
       fail-fast: false
     steps:

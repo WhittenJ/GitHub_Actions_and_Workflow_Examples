@@ -12,8 +12,10 @@ run-name: Create Pull Request to merge Release branch changes into Develop
 
 on:
   pull_request:
-    branches: [release/**]
-    types: [closed]
+    branches:
+      - release/**
+    types:
+      - closed
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -36,12 +36,19 @@ run-name: Build for '${{ github.base_ref || github.ref_name }}' branch.
 
 on:
   push:
-    branches: [feature/**, release/**, master]
+    branches:
+      - feature/**
+      - release/**
+      - master
     paths-ignore:
       - .github/**
   pull_request:
-    branches: [develop, hotfix/**, support/**]
-    types: [closed]
+    branches:
+      - develop
+      - hotfix/**
+      - support/**
+    types:
+      - closed
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -119,7 +126,8 @@ jobs:
   Unit_test_project:
     name: Project Unit Tests
     runs-on: windows-latest
-    needs: [Calc_project_build]
+    needs:
+      - Calc_project_build
     strategy:
       fail-fast: false
     steps:
@@ -141,7 +149,8 @@ jobs:
   Build_project:
     name: Build and Deploy Project
     runs-on: windows-latest
-    needs: [Calc_project_build]
+    needs:
+      - Calc_project_build
     strategy:
       fail-fast: false
     steps:
