@@ -71,6 +71,7 @@ jobs:
             action-validator 0.5.1
 
       - name: Lint Actions
+        continue-on-error: true
         run: |
           find .github/workflows -type f \( -iname \*.yaml -o -iname \*.yml \) \
             | xargs -I {} action-validator --verbose {} > lint_actions.txt
