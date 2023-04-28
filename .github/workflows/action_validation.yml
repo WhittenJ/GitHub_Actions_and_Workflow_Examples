@@ -92,6 +92,7 @@ jobs:
         with:
           tool_versions: |
             action-validator 0.5.1
+            
       - name: Validate Actions
         id: validate_actions
         continue-on-error: true
@@ -102,6 +103,6 @@ jobs:
         if: steps.validate_actions.outcome != 'success'
         uses: actions/upload-artifact@v3
         with:
-          name: Workflow Validation Report
+          name: Validation Error Report
           path: |-
             workflow_error_report.txt
