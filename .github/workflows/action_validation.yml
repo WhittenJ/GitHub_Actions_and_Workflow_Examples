@@ -78,7 +78,7 @@ jobs:
     needs:
       - yaml_validation
       - yamlfix
-    if: always()
+    if: ${{ always() && contains(github.event.head_commit.message, '[validate]') }}
     name: GitHub Actions validation
     runs-on: ubuntu-latest
     steps:
