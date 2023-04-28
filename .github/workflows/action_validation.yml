@@ -41,13 +41,11 @@ jobs:
     if: ${{ always() && contains(join(needs.yaml_validation.outputs.job_status, ','), 'FAILED') }}
     name: Fix GitHub YAML Files using Yamlfix
     runs-on: ubuntu-latest
-
     env:
       # See: https://lyz-code.github.io/yamlfix/#configuration-options
       YAMLFIX_EXPLICIT_START: false
       YAMLFIX_SECTION_WHITELINES: 1
       YAMLFIX_SEQUENCE_STYLE: block_style
-
     steps:
       - uses: actions/checkout@v3
         with:
@@ -92,7 +90,6 @@ jobs:
         with:
           tool_versions: |
             action-validator 0.5.1
-            
       - name: Validate Actions
         id: validate_actions
         continue-on-error: true
