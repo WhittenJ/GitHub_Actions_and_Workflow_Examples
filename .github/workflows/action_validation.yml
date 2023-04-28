@@ -10,7 +10,7 @@ on:
 
 jobs:
   yaml_validation:
-    # if: contains(github.event.head_commit.message, '[run yamlfix]')
+    if: contains(github.event.head_commit.message, '[validate]')
     name: Validate GitHub YAML Files using Lint
     runs-on: ubuntu-latest
     outputs:
@@ -81,6 +81,7 @@ jobs:
       - yaml_validation
       - yamlfix
     if: always()
+    name: GitHub Actions validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
