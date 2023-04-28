@@ -8,41 +8,59 @@ on:
       - .github/**
   workflow_dispatch:
 
-env:
-  # See: https://lyz-code.github.io/yamlfix/#configuration-options
-  YAMLFIX_EXPLICIT_START: false
-  YAMLFIX_SECTION_WHITELINES: 1
-  YAMLFIX_SEQUENCE_STYLE: block_style
-
 jobs:
   yaml_validation:
-    if: contains(github.event.head_commit.message, '[run yamlfix]')
+    if: contains(github.event.head_commit.message, '[validate]')
     name: Validate GitHub YAML Files using Lint
     runs-on: ubuntu-latest
+    outputs:
+      job_status: ${{ steps.job_status.outputs.status }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN  }}
 
       # Use YamlLint to validate .yml files
       - name: Validate YAML files
         id: yamllint
         continue-on-error: true
         run: yamllint -d relaxed .
+      - name: Set job status
+        id: job_status
+        run: |
+          if [ ${{ steps.yamllint.outcome }} != 'success' ]
+          then
+            echo "status=FAILED" >> $GITHUB_OUTPUT
+          else
+            echo "status=SUCCESS" >> $GITHUB_OUTPUT
+          fi
+      - name: Debugging information
+        run: |
+          echo ${{ steps.job_status.outputs.status }}
+          echo ${{ steps.yamllint.outcome }}
+  yamlfix:
+    needs: yaml_validation
+    if: ${{ always() && contains(join(needs.yaml_validation.outputs.job_status, ','), 'FAILED') }}
+    name: Fix GitHub YAML Files using Yamlfix
+    runs-on: ubuntu-latest
+    env:
+      # See: https://lyz-code.github.io/yamlfix/#configuration-options
+      YAMLFIX_EXPLICIT_START: false
+      YAMLFIX_SECTION_WHITELINES: 1
+      YAMLFIX_SEQUENCE_STYLE: block_style
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN  }}
 
       # Install Yamlfix: https://lyz-code.github.io/yamlfix/
       - name: Install Yamlfix
-        if: steps.yamllint.outcome != 'success'
         run: pip install Yamlfix
 
       # Run Yamlfix, only if yamllint detected errors.
       - name: Run Yamlfix
-        if: steps.yamllint.outcome != 'success'
         run: yamlfix .
 
       # Check for Yamlfix changes
       - name: Check for changes
-        if: steps.yamllint.outcome != 'success'
         id: yamlfix_check
         run: echo "code_changed=$(git status --porcelain | head -n 1)" >> $GITHUB_OUTPUT
 
@@ -54,11 +72,14 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add .
-          git commit -m 'Yamlfix automatic changes'
+          git commit -m 'Yamlfix automatic changes. No build needed.'
           git push
   action_validation:
     needs:
       - yaml_validation
+      - yamlfix
+    if: ${{ always() && contains(github.event.head_commit.message, '[validate]') }}
+    name: GitHub Actions validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -79,6 +100,6 @@ jobs:
         if: steps.validate_actions.outcome != 'success'
         uses: actions/upload-artifact@v3
         with:
-          name: Workflow Validation Report
+          name: Validation Error Report
           path: |-
             workflow_error_report.txt
