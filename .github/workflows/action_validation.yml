@@ -85,4 +85,4 @@ jobs:
         with:
           name: my-artifact
           path: |
-            github_actions_and_workflow_examples/lint_actions.txt
+            lint_actions.txt
