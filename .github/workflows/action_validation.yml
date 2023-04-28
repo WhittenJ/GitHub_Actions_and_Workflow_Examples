@@ -30,6 +30,15 @@ jobs:
         continue-on-error: true
         run: yamllint -d relaxed .
 
+  yamlfix:
+    if: ${{ failure() }}
+    name: Fix GitHub YAML Files using Yamlfix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN  }}
+
       # Install Yamlfix: https://lyz-code.github.io/yamlfix/
       - name: Install Yamlfix
         if: steps.yamllint.outcome != 'success'
