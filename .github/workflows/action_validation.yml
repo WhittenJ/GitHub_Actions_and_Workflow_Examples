@@ -23,16 +23,30 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.WORKFLOW_TOKEN  }}
+
+      # Use YamlLint to validate .yml files
       - name: Validate YAML files
+        id: yamllint
         continue-on-error: true
         run: yamllint -d relaxed .
+
+      # Install Yamlfix: https://lyz-code.github.io/yamlfix/
       - name: Install Yamlfix
+        if: steps.yamllint.outcome != 'success'
         run: pip install Yamlfix
+
+      # Run Yamlfix, only if yamllint detected errors.
       - name: Run Yamlfix
+        if: steps.yamllint.outcome != 'success'
         run: yamlfix .
+
+      # Check for Yamlfix changes
       - name: Check for changes
+        if: steps.yamllint.outcome != 'success'
         id: yamlfix_check
         run: echo "code_changed=$(git status --porcelain | head -n 1)" >> $GITHUB_OUTPUT
+
+      # Commit the Yamlfix changes
       - name: Commit Yamlfix changes
         if: ${{ steps.yamlfix_check.outputs.code_changed }}
         run: |-
