@@ -44,9 +44,9 @@ jobs:
         run: |
           echo ${{ steps.job_status.outputs.status }}
           echo ${{ steps.yamllint.outcome }}
+  
   yamlfix:
     needs: yaml_validation
-    # if: ${{ needs.yaml_validation.outputs.job_status }} == "FAILED"
     if: ${{ always() && contains(join(needs.yaml_validation.outputs.job_status, ','), 'FAILED') }}
     name: Fix GitHub YAML Files using Yamlfix
     runs-on: ubuntu-latest
@@ -54,9 +54,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.WORKFLOW_TOKEN  }}
-      - name: Debugging
-        run: |
-          echo ${{ needs.yaml_validation.outputs.job_status }}
 
       # Install Yamlfix: https://lyz-code.github.io/yamlfix/
       - name: Install Yamlfix
@@ -81,6 +78,7 @@ jobs:
           git add .
           git commit -m 'Yamlfix automatic changes'
           git push
+  
   action_validation:
     needs:
       - yaml_validation
