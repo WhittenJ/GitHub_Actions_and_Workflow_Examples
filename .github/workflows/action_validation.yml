@@ -8,12 +8,6 @@ on:
       - .github/**
   workflow_dispatch:
 
-env:
-  # See: https://lyz-code.github.io/yamlfix/#configuration-options
-  YAMLFIX_EXPLICIT_START: false
-  YAMLFIX_SECTION_WHITELINES: 1
-  YAMLFIX_SEQUENCE_STYLE: block_style
-
 jobs:
   yaml_validation:
     # if: contains(github.event.head_commit.message, '[run yamlfix]')
@@ -47,6 +41,13 @@ jobs:
     if: ${{ always() && contains(join(needs.yaml_validation.outputs.job_status, ','), 'FAILED') }}
     name: Fix GitHub YAML Files using Yamlfix
     runs-on: ubuntu-latest
+
+    env:
+      # See: https://lyz-code.github.io/yamlfix/#configuration-options
+      YAMLFIX_EXPLICIT_START: false
+      YAMLFIX_SECTION_WHITELINES: 1
+      YAMLFIX_SEQUENCE_STYLE: block_style
+
     steps:
       - uses: actions/checkout@v3
         with:
