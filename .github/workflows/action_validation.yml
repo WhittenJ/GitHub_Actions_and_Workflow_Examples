@@ -26,9 +26,10 @@ jobs:
       - name: Validate YAML files
         continue-on-error: true
         run: yamllint -d relaxed .
-        
+
       - name: Install Yamlfix
         run: pip install Yamlfix
+        
       - name: Run Yamlfix
         run: yamlfix .
       - name: Check for changes
