@@ -44,7 +44,6 @@ jobs:
         run: |
           echo ${{ steps.job_status.outputs.status }}
           echo ${{ steps.yamllint.outcome }}
-          
   yamlfix:
     needs: yaml_validation
     if: ${{ needs.yaml_validation.outputs.job_status }} == "FAILED"
