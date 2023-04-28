@@ -69,6 +69,7 @@ jobs:
         with:
           tool_versions: |
             action-validator 0.5.1
+            
       - name: Validate Actions
         id: validate_actions
         continue-on-error: true
