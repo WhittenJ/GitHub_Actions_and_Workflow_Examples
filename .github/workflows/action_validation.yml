@@ -81,4 +81,4 @@ jobs:
         with:
           name: Workflow Validation Report
           path: |-
-            workflow_error_report_${{ GITHUB.SHA::6 }}.txt
+            workflow_error_report_*.txt
