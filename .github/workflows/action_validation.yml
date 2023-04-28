@@ -35,7 +35,7 @@ jobs:
         if: steps.outcome.yamllint != 'success'
         run: pip install Yamlfix
 
-      # Run Yamlfix
+      # Run Yamlfix, only if yamllint detected errors.
       - name: Run Yamlfix
         if: steps.outcome.yamllint != 'success'
         run: yamlfix .
