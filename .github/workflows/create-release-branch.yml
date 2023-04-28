@@ -27,8 +27,6 @@ jobs:
   Create_Release:
     name: Create Release branch from latest Develop
     runs-on: windows-latest
-    strategy:
-      fail-fast: false
     steps:
       # Add token here to enable this workflow to trigger other workflows on PUSH, such as maven-feature-build.yml
       - name: Clone the source code

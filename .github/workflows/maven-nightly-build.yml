@@ -14,8 +14,6 @@ jobs:
   Update_project:
     name: Automatically update Project dependencies
     runs-on: windows-latest
-    strategy:
-      fail-fast: false
     steps:
       # Add token here to enable this workflow to trigger other workflows on PUSH, such as maven-feature-build.yml
       - name: Clone the source code
@@ -109,8 +107,6 @@ jobs:
     runs-on: windows-latest
     needs:
       - Calc_project_build
-    strategy:
-      fail-fast: false
     steps:
       - name: Clone the source code
         uses: actions/checkout@v3
@@ -139,8 +135,6 @@ jobs:
     runs-on: windows-latest
     needs:
       - Calc_project_build
-    strategy:
-      fail-fast: false
     steps:
       - name: Clone the source code
         uses: actions/checkout@v3
