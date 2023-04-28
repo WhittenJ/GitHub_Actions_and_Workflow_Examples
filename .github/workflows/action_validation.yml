@@ -31,7 +31,6 @@ jobs:
         id: yamllint
         continue-on-error: true
         run: yamllint -d relaxed .
-
       - name: Set job status
         id: job_status
         run: |
@@ -41,12 +40,10 @@ jobs:
           else
             echo "status=SUCCESS" >> $GITHUB_OUTPUT
           fi
-
-      - name: "Debugging"
+      - name: Debugging
         run: |
           echo ${{ steps.job_status.outputs.status }}
           echo ${{ steps.yamllint.outcome }}
-
   yamlfix:
     needs: yaml_validation
     if: ${{ needs.yaml_validation.outputs.job_status }} == "FAILED"
@@ -87,7 +84,6 @@ jobs:
           git add .
           git commit -m 'Yamlfix automatic changes'
           git push
-
   action_validation:
     needs:
       - yaml_validation
