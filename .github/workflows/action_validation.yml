@@ -44,6 +44,7 @@ jobs:
         run: |
           echo ${{ steps.job_status.outputs.status }}
           echo ${{ steps.yamllint.outcome }}
+  
   yamlfix:
     needs: yaml_validation
     # if: ${{ needs.yaml_validation.outputs.job_status }} == "FAILED"
@@ -60,17 +61,14 @@ jobs:
 
       # Install Yamlfix: https://lyz-code.github.io/yamlfix/
       - name: Install Yamlfix
-        if: steps.yamllint.outcome != 'success'
         run: pip install Yamlfix
 
       # Run Yamlfix, only if yamllint detected errors.
       - name: Run Yamlfix
-        if: steps.yamllint.outcome != 'success'
         run: yamlfix .
 
       # Check for Yamlfix changes
       - name: Check for changes
-        if: steps.yamllint.outcome != 'success'
         id: yamlfix_check
         run: echo "code_changed=$(git status --porcelain | head -n 1)" >> $GITHUB_OUTPUT
 
@@ -84,6 +82,7 @@ jobs:
           git add .
           git commit -m 'Yamlfix automatic changes'
           git push
+  
   action_validation:
     needs:
       - yaml_validation
