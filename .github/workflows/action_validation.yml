@@ -44,7 +44,6 @@ jobs:
         run: |
           echo ${{ steps.job_status.outputs.status }}
           echo ${{ steps.yamllint.outcome }}
-  
   yamlfix:
     needs: yaml_validation
     if: ${{ always() && contains(join(needs.yaml_validation.outputs.job_status, ','), 'FAILED') }}
@@ -78,7 +77,6 @@ jobs:
           git add .
           git commit -m 'Yamlfix automatic changes'
           git push
-  
   action_validation:
     needs:
       - yaml_validation
