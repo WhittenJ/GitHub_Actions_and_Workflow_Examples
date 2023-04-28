@@ -39,6 +39,7 @@ jobs:
             echo "status=FAILED" >> $GITHUB_OUTPUT
           else
             echo "status=SUCCESS" >> $GITHUB_OUTPUT
+          fi
 
   yamlfix:
     needs: yaml_validation
