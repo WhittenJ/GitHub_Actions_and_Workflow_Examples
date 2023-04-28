@@ -16,9 +16,11 @@ env:
 
 jobs:
   yaml_validation:
-    if: contains(github.event.head_commit.message, '[run yamlfix]')
+    # if: contains(github.event.head_commit.message, '[run yamlfix]')
     name: Validate GitHub YAML Files using Lint
     runs-on: ubuntu-latest
+    outputs:
+      job_status: ${{ steps.yamllint.outputs.status }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -30,9 +32,17 @@ jobs:
         continue-on-error: true
         run: yamllint -d relaxed .
 
+      - name: Set job status
+        run: |
+          if [ steps.yamllint.outcome != 'success' ]
+          then
+            echo "status=FAILED" >> $GITHUB_OUTPUT
+          else
+            echo "status=SUCCESS" >> $GITHUB_OUTPUT
+
   yamlfix:
     needs: yaml_validation
-    if: ${{ failure() }}
+    if: ${{ needs.yaml_validation.outputs.job_status == "FAILED" }}
     name: Fix GitHub YAML Files using Yamlfix
     runs-on: ubuntu-latest
     steps:
@@ -66,7 +76,7 @@ jobs:
           git add .
           git commit -m 'Yamlfix automatic changes'
           git push
-          
+
   action_validation:
     needs:
       - yaml_validation
