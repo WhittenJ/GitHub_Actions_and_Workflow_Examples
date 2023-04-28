@@ -32,17 +32,17 @@ jobs:
 
       # Install Yamlfix: https://lyz-code.github.io/yamlfix/
       - name: Install Yamlfix
-        if: steps.outcome.yamllint != 'success'
+        if: steps.yamllint.outcome != 'success'
         run: pip install Yamlfix
 
       # Run Yamlfix, only if yamllint detected errors.
       - name: Run Yamlfix
-        if: steps.outcome.yamllint != 'success'
+        if: steps.yamllint.outcome != 'success'
         run: yamlfix .
 
       # Check for Yamlfix changes
       - name: Check for changes
-        if: steps.outcome.yamllint != 'success'
+        if: steps.yamllint.outcome != 'success'
         id: yamlfix_check
         run: echo "code_changed=$(git status --porcelain | head -n 1)" >> $GITHUB_OUTPUT
 
