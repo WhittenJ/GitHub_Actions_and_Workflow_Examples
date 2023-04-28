@@ -45,7 +45,7 @@ jobs:
         if: steps.outcome.yamllint != 'success'
         id: yamlfix_check
         run: echo "code_changed=$(git status --porcelain | head -n 1)" >> $GITHUB_OUTPUT
-      
+
       # Commit the Yamlfix changes
       - name: Commit Yamlfix changes
         if: ${{ steps.yamlfix_check.outputs.code_changed }}
