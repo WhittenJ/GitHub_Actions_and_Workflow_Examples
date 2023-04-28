@@ -56,3 +56,21 @@ jobs:
           git add .
           git commit -m 'Yamlfix automatic changes'
           git push
+
+  actions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Install action-validator with asdf
+        uses: asdf-vm/actions/install@v2
+        with:
+          tool_versions: |
+            action-validator 0.1.2
+
+      - name: Lint Actions
+        run: |
+          find .github/workflows -type f \( -iname \*.yaml -o -iname \*.yml \) \
+            | xargs -I {} action-validator --verbose {}
