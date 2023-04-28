@@ -49,13 +49,13 @@ on:
       - support/**
     types:
       - closed
-  workflow_run:
-    workflows:
-      - GitHub Action Validation
-    types:
-      - completed
-    path:
-      - .github/**
+  # workflow_run:
+  #   workflows:
+  #     - GitHub Action Validation
+  #   types:
+  #     - completed
+  #   path:
+  #     - .github/**
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
