@@ -79,6 +79,6 @@ jobs:
         if: steps.validate_actions.outcome != 'success'
         uses: actions/upload-artifact@v3
         with:
-          name: Workflow Validation Report ${{ GITHUB.SHA::6 }}
+          name: Workflow Validation Report
           path: |-
             workflow_error_report_${{ GITHUB.SHA::6 }}.txt
