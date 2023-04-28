@@ -74,7 +74,6 @@ jobs:
           git add .
           git commit -m 'Yamlfix automatic changes'
           git push
-          
   action_validation:
     needs:
       - yaml_validation
