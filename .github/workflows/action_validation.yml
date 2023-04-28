@@ -42,7 +42,7 @@ jobs:
 
   yamlfix:
     needs: yaml_validation
-    if: ${{ needs.yaml_validation.outputs.job_status == "FAILED" }}
+    if: ${{ needs.yaml_validation.outputs.job_status }} == "FAILED"
     name: Fix GitHub YAML Files using Yamlfix
     runs-on: ubuntu-latest
     steps:
