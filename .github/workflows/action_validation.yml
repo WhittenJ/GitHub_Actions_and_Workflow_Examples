@@ -23,8 +23,6 @@ jobs:
       job_status: ${{ steps.job_status.outputs.status }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN  }}
 
       # Use YamlLint to validate .yml files
       - name: Validate YAML files
