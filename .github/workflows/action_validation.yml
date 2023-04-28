@@ -73,4 +73,15 @@ jobs:
       - name: Lint Actions
         run: |
           find .github/workflows -type f \( -iname \*.yaml -o -iname \*.yml \) \
-            | xargs -I {} action-validator --verbose {}
+            | xargs -I {} action-validator --verbose {} > lint_actions.txt
+
+      - name: Debug
+        run: |
+          echo $(pwd)
+          ls
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: |
+            github_actions_and_workflow_examples/lint_actions.txt

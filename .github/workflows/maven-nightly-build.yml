@@ -88,6 +88,8 @@ jobs:
     runs-on: windows-latest
     needs:
       - Update_project
+    strategy:
+      fail-fast: false
     
     outputs:
       project_build: ${{ steps.calc_build_number.outputs.project_build }}
