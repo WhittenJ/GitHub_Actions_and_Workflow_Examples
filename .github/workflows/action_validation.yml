@@ -57,6 +57,10 @@ jobs:
         with:
           token: ${{ secrets.WORKFLOW_TOKEN  }}
 
+      - name: "Debugging"
+        run: |
+          echo ${{ needs.yaml_validation.outputs.job_status }}
+
       # Install Yamlfix: https://lyz-code.github.io/yamlfix/
       - name: Install Yamlfix
         if: steps.yamllint.outcome != 'success'
